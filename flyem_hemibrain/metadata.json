@@ -1,0 +1,30 @@
+{
+  "source": "FlyEM Hemibrain EM Data",
+  "url": "precomputed://https://neuroglancer-janelia-flyem-hemibrain.storage.googleapis.com/emdata/clahe_yz/jpeg",
+  "crop_size": 1000,
+  "coordinates": {
+    "start": [
+      18116,
+      23368,
+      17246
+    ],
+    "end": [
+      19116,
+      24368,
+      18246
+    ]
+  },
+  "shape": [
+    1000,
+    1000,
+    1000
+  ],
+  "dtype": "uint8",
+  "stats": {
+    "min": 0,
+    "max": 255,
+    "mean": 136.540512316,
+    "size_mb": 953.67431640625
+  },
+  "created": "2025-06-03T23:04:28.909092"
+}

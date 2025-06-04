@@ -1,0 +1,23 @@
+# EM Dataset Downloaders Requirements
+# Install with: pip install -r requirements.txt
+
+# Core dependencies
+requests>=2.28.0
+numpy>=1.21.0
+pathlib2>=2.3.7; python_version < "3.4"
+
+# CloudVolume for FlyEM Hemibrain downloader
+cloud-volume>=8.0.0
+neuroglancer>=2.36.0
+
+# Optional visualization dependencies to view data
+tifffile>=2023.1.23
+zarr>=2.14.0
+h5py>=3.8.0
+
+# For DM3 file handling (EMPIAR dataset)
+hyperspy>=1.7.0
+
+# Development and testing (optional)
+pytest>=7.0.0
+pytest-cov>=4.0.0 
