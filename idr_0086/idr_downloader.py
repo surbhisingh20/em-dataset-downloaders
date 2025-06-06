@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 IDR-0086 Data Downloader
+Downloads specific Figure S3B FIB-SEM files from IDR-0086
 """
 
 import json
@@ -35,50 +36,34 @@ def download_file(file_info):
     }
 
 def main():
-    """Download IDR-0086 3D FIB-SEM TIFF files."""
-    parser = argparse.ArgumentParser(description="Download 3D FIB-SEM TIFF files from IDR-0086")
-    parser.add_argument('--files', '-f', type=int, default=12, help='Number of TIFF volumes to download')
-    parser.add_argument('--threads', '-t', type=int, default=4, help='Parallel download threads')
+    """Download IDR-0086 Figure S3B FIB-SEM TIFF files."""
+    parser = argparse.ArgumentParser(description="Download Figure S3B FIB-SEM files from IDR-0086")
+    parser.add_argument('--threads', '-t', type=int, default=2, help='Parallel download threads')
     
     args = parser.parse_args()
     
     # Setup
     DOWNLOAD_DIR.mkdir(exist_ok=True)
     
-    # Get all TIFF files from both directories
-    ftp = ftplib.FTP("ftp.ebi.ac.uk")
-    ftp.login()
+    # Target specific Figure S3B files
+    target_files = [
+        ("Figure_S3B_FIB-SEM_U2OS_20x20x20nm_xy.tif", "20200610-ftp/experimentD/Miron_FIB-SEM/Miron_FIB-SEM_processed/Figure_S3B_FIB-SEM_U2OS_20x20x20nm_xy.tif"),
+        ("Figure_S3B_FIB-SEM_U2OS_20x20x20nm_xz.tif", "20200610-ftp/experimentD/Miron_FIB-SEM/Miron_FIB-SEM_processed/Figure_S3B_FIB-SEM_U2OS_20x20x20nm_xz.tif")
+    ]
     
-    # Get files from processed directory
-    ftp.cwd(f"{BASE_PATH}/20200610-ftp/experimentD/Miron_FIB-SEM/Miron_FIB-SEM_processed")
-    processed_files = [f for f in ftp.nlst() if f.endswith(('.tif', '.tiff'))]
-    
-    # Get files from dropbox directory  
-    ftp.cwd(f"{BASE_PATH}/20200714-dropbox")
-    dropbox_files = [f for f in ftp.nlst() if f.endswith(('.tif', '.tiff'))]
-    ftp.quit()
-    
-    # Create file list with full remote paths
-    all_files = []
-    for f in processed_files:
-        all_files.append((f, f"20200610-ftp/experimentD/Miron_FIB-SEM/Miron_FIB-SEM_processed/{f}"))
-    for f in dropbox_files:
-        all_files.append((f, f"20200714-dropbox/{f}"))
-    
-    files_to_download = all_files[:args.files]
-    
+    # Download files in parallel
     with ThreadPoolExecutor(max_workers=args.threads) as executor:
-        results = list(executor.map(download_file, files_to_download))
+        results = list(executor.map(download_file, target_files))
     
     # Create metadata
     metadata = {
-        'dataset': 'IDR-0086 Human Chromatin Organization',
+        'dataset': 'IDR-0086 Human Chromatin Organization (Figure S3B)',
         'source': f'ftp://ftp.ebi.ac.uk{BASE_PATH}',
         'technique': 'Focused Ion Beam Scanning Electron Microscopy (FIB-SEM)',
         'sample': 'U2OS human osteosarcoma cells',
         'resolution_nm': [20, 20, 20],
-        'format': 'Multi-page TIFF (200-500 slices per volume)',
-        'total_available_files': len(all_files),
+        'format': 'Multi-page TIFF volumes (xy and xz projections)',
+        'description': 'Figure S3B supplementary data showing FIB-SEM U2OS cell imaging',
         'files_downloaded': len(results),
         'total_size_mb': sum(r['size_mb'] for r in results),
         'files': results,
